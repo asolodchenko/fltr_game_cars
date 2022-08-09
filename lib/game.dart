@@ -1,5 +1,4 @@
 import 'package:flame/components.dart';
-import 'package:flame/effects.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'player.dart';
@@ -7,9 +6,6 @@ import 'player.dart';
 class MyGame extends FlameGame with PanDetector {
   late Player player;
   late SpriteComponent background;
-
-  double gravity = 2;
-  Vector2 velocity = Vector2(0, 0);
 
   @override
   Future<void> onLoad() async {
@@ -35,29 +31,36 @@ class MyGame extends FlameGame with PanDetector {
     add(player);
   }
 
+  /// this is swipe detection
+  // @override
+  // void onPanUpdate(DragUpdateInfo info) {
+  //   double swipeVelocity = 10;
+
+  //   /// leftSwipe
+  //   if (info.eventPosition.viewport.x < -swipeVelocity) {
+  //     // player.setMoveDirection(Vector2(-1, 0));
+
+  //     /// right swipe
+  //   } else if (info.delta.viewport.x > swipeVelocity) {
+  //     // player.setMoveDirection(Vector2(1, 0));
+
+  //     /// up swipe
+  //   } else if (info.delta.viewport.y < -swipeVelocity) {
+  //     // player.setMoveDirection(Vector2(0, -1));
+
+  //     /// down swipe
+  //   } else if (info.delta.viewport.y > swipeVelocity) {
+  //     // player.setMoveDirection(Vector2(0, 1));
+
+  //   }
+  // }
+
   @override
-  void onPanUpdate(DragUpdateInfo info) {
-    double swipeVelocity = 10;
-
-    /// leftSwipe
-    if (info.delta.viewport.x < -swipeVelocity) {
-      player.setMoveDirection(Vector2(-1, 0));
-      print('left swipe');
-
-      /// right swipe
-    } else if (info.delta.viewport.x > swipeVelocity) {
-      player.setMoveDirection(Vector2(1, 0));
-      print('right swipe');
-
-      /// up swipe
-    } else if (info.delta.viewport.y < -swipeVelocity) {
-      // player.setMoveDirection(Vector2(0, -1));
-      print('up swite');
-
-      /// down swipe
-    } else if (info.delta.viewport.y > swipeVelocity) {
-      // player.setMoveDirection(Vector2(0, 1));
-      print('down swipe');
+  void onPanDown(DragDownInfo info) {
+    if (info.eventPosition.game.x < size.x / 2) {
+      player.moveLeft();
+    } else if (info.eventPosition.game.x > size.x / 2) {
+      player.moveRight();
     }
   }
 }
