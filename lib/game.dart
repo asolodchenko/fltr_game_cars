@@ -1,10 +1,12 @@
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
+import 'package:game/enemy_manager.dart';
 import 'player.dart';
 
 class MyGame extends FlameGame with PanDetector {
   late Player player;
+  late EnemyManager enemyManager;
   late SpriteComponent background;
 
   @override
@@ -13,6 +15,7 @@ class MyGame extends FlameGame with PanDetector {
 
     /// load game images
     final playerImage = await images.load('player.png');
+    final enemyImage = await images.load('enemy.png');
     final backgroundImage = await images.load('background.png');
 
     /// game background component
@@ -24,11 +27,15 @@ class MyGame extends FlameGame with PanDetector {
 
     /// player component
     player = Player(
-      sprite: Sprite(playerImage),
-      size: Vector2(100, 150),
-      position: size / 2,
-    );
+        sprite: Sprite(playerImage),
+        size: Vector2(100, 150),
+        position: Vector2(size.x / 2, size.y / 1.2))
+      ..debugMode = true;
     add(player);
+
+    /// enemy component
+    enemyManager = EnemyManager(sprite: Sprite(enemyImage));
+    add(enemyManager);
   }
 
   /// this is swipe detection
