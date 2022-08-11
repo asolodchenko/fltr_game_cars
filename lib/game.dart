@@ -2,6 +2,7 @@ import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:game/enemy_manager.dart';
+import 'package:game/game_consts.dart';
 import 'player.dart';
 
 class MyGame extends FlameGame with PanDetector {
@@ -14,9 +15,16 @@ class MyGame extends FlameGame with PanDetector {
     await super.onLoad();
 
     /// load game images
-    final playerImage = await images.load('player.png');
-    // final enemyImage = await images.load('enemy.png');
+    final enemyImage = await images.load('cars/audi.png');
     final backgroundImage = await images.load('background.png');
+
+    final policeCar =
+        [1, 2, 3].map((i) => Sprite.load('cars/police_animation/$i.png'));
+
+    final piliceCarAnimation = SpriteAnimation.spriteList(
+      await Future.wait(policeCar),
+      stepTime: 0.25,
+    );
 
     /// game background component
     background = SpriteComponent(
@@ -25,17 +33,27 @@ class MyGame extends FlameGame with PanDetector {
     );
     add(background);
 
-    /// player component
     player = Player(
-        sprite: Sprite(playerImage),
-        size: Vector2(65, 100),
-        position: Vector2(size.x / 2, size.y / 1.2))
-      ..debugMode = true;
+      animation: piliceCarAnimation,
+      size: GameConsts.playerSize,
+    )
+      ..position = Vector2(size.x / 2, size.y / 1.4)
+      ..debugMode = GameConsts.debugMode;
+
     add(player);
 
     /// enemy component
-    enemyManager = EnemyManager(sprite: Sprite(playerImage));
+    enemyManager = EnemyManager(sprite: Sprite(enemyImage));
     add(enemyManager);
+  }
+
+  @override
+  void onPanDown(DragDownInfo info) {
+    if (info.eventPosition.game.x < size.x / 2) {
+      player.moveLeft();
+    } else if (info.eventPosition.game.x > size.x / 2) {
+      player.moveRight();
+    }
   }
 
   /// this is swipe detection
@@ -62,12 +80,4 @@ class MyGame extends FlameGame with PanDetector {
   //   }
   // }
 
-  @override
-  void onPanDown(DragDownInfo info) {
-    if (info.eventPosition.game.x < size.x / 2) {
-      player.moveLeft();
-    } else if (info.eventPosition.game.x > size.x / 2) {
-      player.moveRight();
-    }
-  }
 }

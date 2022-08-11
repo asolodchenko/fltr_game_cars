@@ -1,57 +1,53 @@
-import 'dart:ui';
-
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flutter/animation.dart';
 
-class Player extends SpriteComponent with HasGameRef {
+class Player extends SpriteAnimationComponent with HasGameRef {
   final double moveDuration = 0.4;
   final Curve animationCurve = Curves.easeIn;
-  // Vector2 _moveDirection = Vector2(0, 0);
-  // final double _speed = 300;
+  bool canMoveLeft = true;
+  bool canMoveRight = true;
+  bool isCenter = true;
 
   Player({
-    Sprite? sprite,
+    SpriteAnimation? animation,
     Vector2? size,
     Vector2? position,
     Anchor? anchor,
   }) : super(
-          sprite: sprite,
+          animation: animation,
           size: size,
           position: position,
           anchor: Anchor.center,
         );
 
-  @override
-  void update(double dt) {
-    super.update(dt);
-
-    // position += _moveDirection.normalized() * _speed * dt;
-    /// limits carachter to go out of the screen
-    position.clamp(Vector2.zero() + size / 1.6, gameRef.size - size / 1.6);
-  }
-
-  // void setMoveDirection(Vector2 newMoveDirection) {
-  //   _moveDirection = newMoveDirection;
-  // }
-
   void moveLeft() {
     final effect = MoveByEffect(
-        Vector2(-gameRef.size.x / 3, 0),
+        Vector2(-gameRef.size.x / 4, 0),
         EffectController(
           duration: moveDuration,
           curve: animationCurve,
         ));
-    add(effect);
+    if (canMoveLeft) {
+      add(effect);
+      isCenter = !isCenter;
+      canMoveLeft = isCenter;
+      canMoveRight = true;
+    }
   }
 
   void moveRight() {
     final effect = MoveByEffect(
-        Vector2(gameRef.size.x / 3, 0),
+        Vector2(gameRef.size.x / 4, 0),
         EffectController(
           duration: moveDuration,
           curve: animationCurve,
         ));
-    add(effect);
+    if (canMoveRight) {
+      add(effect);
+      isCenter = !isCenter;
+      canMoveRight = isCenter;
+      canMoveLeft = true;
+    }
   }
 }

@@ -1,9 +1,9 @@
 import 'dart:math';
 
 import 'package:flame/components.dart';
-import 'package:flame/effects.dart';
 import 'package:flutter/material.dart';
 import 'package:game/enemy.dart';
+import 'package:game/game_consts.dart';
 
 class EnemyManager extends Component with HasGameRef {
   /// enemy image sprite
@@ -21,7 +21,7 @@ class EnemyManager extends Component with HasGameRef {
 
   void _spawnEnemy() {
     /// enemy size
-    Vector2 initialSize = Vector2(65, 100);
+    Vector2 initialSize = GameConsts.playerSize;
     Vector2 position;
     position = _getEnemyPosition(initialSize);
 
@@ -30,7 +30,7 @@ class EnemyManager extends Component with HasGameRef {
       size: initialSize,
       position: position,
     )
-      ..debugMode = true
+      ..debugMode = GameConsts.debugMode
       ..debugColor = Colors.red
       ..anchor = Anchor.center;
 
@@ -51,10 +51,10 @@ class EnemyManager extends Component with HasGameRef {
       position = Vector2(gameRef.size.x / 2, 0);
     } else if (randomNumber == 2) {
       /// left part of the screen
-      position = Vector2(gameRef.size.x / 6, 0);
+      position = Vector2(gameRef.size.x / 4, 0);
     } else {
       /// right part of the screen
-      position = Vector2(gameRef.size.x - (gameRef.size.x / 6), 0);
+      position = Vector2(gameRef.size.x - (gameRef.size.x / 4), 0);
     }
 
     return position;
