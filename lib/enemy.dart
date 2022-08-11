@@ -4,6 +4,7 @@ import 'package:game/game_consts.dart';
 import 'package:game/player.dart';
 
 class Enemy extends SpriteComponent with HasGameRef, CollisionCallbacks {
+  late SpriteAnimationComponent spriteAnimationComponent;
   final double _speed = 300;
 
   Enemy({
@@ -26,6 +27,20 @@ class Enemy extends SpriteComponent with HasGameRef, CollisionCallbacks {
       parentSize: GameConsts.playerSize,
     );
     add(hitbox);
+
+    final explosion = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+        .map((i) => Sprite.load('explosion/circle_explosion$i.png'));
+
+    SpriteAnimation explosionAnimation = SpriteAnimation.spriteList(
+      await Future.wait(explosion),
+      stepTime: 0.1,
+      loop: false,
+    );
+
+    spriteAnimationComponent = SpriteAnimationComponent(
+      animation: explosionAnimation,
+      anchor: Anchor.center,
+    )..size = Vector2.all(256);
   }
 
   @override
@@ -34,6 +49,9 @@ class Enemy extends SpriteComponent with HasGameRef, CollisionCallbacks {
     onCollisionCallback?.call(intersectionPoints, other);
 
     if (other is Player) {
+      spriteAnimationComponent.position = position.clone()..y += size.y / 4;
+      gameRef.add(spriteAnimationComponent);
+
       removeFromParent();
     }
   }
