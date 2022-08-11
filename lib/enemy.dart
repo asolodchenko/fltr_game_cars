@@ -1,6 +1,9 @@
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:game/game_consts.dart';
+import 'package:game/player.dart';
 
-class Enemy extends SpriteComponent with HasGameRef {
+class Enemy extends SpriteComponent with HasGameRef, CollisionCallbacks {
   final double _speed = 300;
 
   Enemy({
@@ -14,6 +17,26 @@ class Enemy extends SpriteComponent with HasGameRef {
           position: position,
           anchor: Anchor.center,
         );
+
+  @override
+  Future<void> onLoad() async {
+    await super.onLoad();
+    final hitbox = RectangleHitbox.relative(
+      Vector2(0.5, 0.9),
+      parentSize: GameConsts.playerSize,
+    );
+    add(hitbox);
+  }
+
+  @override
+  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
+    super.onCollision(intersectionPoints, other);
+    onCollisionCallback?.call(intersectionPoints, other);
+
+    if (other is Player) {
+      //TODO! implement collision
+    }
+  }
 
   @override
   void update(double dt) {

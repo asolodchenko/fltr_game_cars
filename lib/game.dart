@@ -5,7 +5,7 @@ import 'package:game/enemy_manager.dart';
 import 'package:game/game_consts.dart';
 import 'player.dart';
 
-class MyGame extends FlameGame with PanDetector {
+class MyGame extends FlameGame with PanDetector, HasCollisionDetection {
   late Player player;
   late EnemyManager enemyManager;
   late SpriteComponent background;
@@ -23,7 +23,7 @@ class MyGame extends FlameGame with PanDetector {
 
     final piliceCarAnimation = SpriteAnimation.spriteList(
       await Future.wait(policeCar),
-      stepTime: 0.25,
+      stepTime: 0.2,
     );
 
     /// game background component
@@ -31,7 +31,7 @@ class MyGame extends FlameGame with PanDetector {
       sprite: Sprite(backgroundImage),
       size: size,
     );
-    add(background);
+    // add(background);
 
     player = Player(
       animation: piliceCarAnimation,
