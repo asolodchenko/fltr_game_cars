@@ -15,7 +15,7 @@ class MyGame extends FlameGame with PanDetector {
 
     /// load game images
     final playerImage = await images.load('player.png');
-    final enemyImage = await images.load('enemy.png');
+    // final enemyImage = await images.load('enemy.png');
     final backgroundImage = await images.load('background.png');
 
     /// game background component
@@ -28,13 +28,13 @@ class MyGame extends FlameGame with PanDetector {
     /// player component
     player = Player(
         sprite: Sprite(playerImage),
-        size: Vector2(100, 150),
+        size: Vector2(65, 100),
         position: Vector2(size.x / 2, size.y / 1.2))
       ..debugMode = true;
     add(player);
 
     /// enemy component
-    enemyManager = EnemyManager(sprite: Sprite(enemyImage));
+    enemyManager = EnemyManager(sprite: Sprite(playerImage));
     add(enemyManager);
   }
 

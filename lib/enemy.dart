@@ -2,7 +2,7 @@ import 'dart:math';
 import 'package:flame/components.dart';
 
 class Enemy extends SpriteComponent with HasGameRef {
-  final double _speed = 100;
+  final double _speed = 300;
 
   Enemy({
     Sprite? sprite,

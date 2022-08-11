@@ -1,6 +1,8 @@
 import 'dart:math';
 
 import 'package:flame/components.dart';
+import 'package:flame/effects.dart';
+import 'package:flutter/material.dart';
 import 'package:game/enemy.dart';
 
 class EnemyManager extends Component with HasGameRef {
@@ -10,7 +12,7 @@ class EnemyManager extends Component with HasGameRef {
   Random random = Random();
 
   /// time of respawning enemies
-  double enemyTimeSpawn = 3;
+  double enemyTimeSpawn = 1;
   late Timer timer;
 
   EnemyManager({required this.sprite}) : super() {
@@ -18,7 +20,8 @@ class EnemyManager extends Component with HasGameRef {
   }
 
   void _spawnEnemy() {
-    Vector2 initialSize = Vector2(100, 100);
+    /// enemy size
+    Vector2 initialSize = Vector2(65, 100);
     Vector2 position;
     position = _getEnemyPosition(initialSize);
 
@@ -28,6 +31,7 @@ class EnemyManager extends Component with HasGameRef {
       position: position,
     )
       ..debugMode = true
+      ..debugColor = Colors.red
       ..anchor = Anchor.center;
 
     gameRef.add(enemy);
