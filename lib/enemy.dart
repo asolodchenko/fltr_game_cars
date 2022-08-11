@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:flame/components.dart';
 
 class Enemy extends SpriteComponent with HasGameRef {
@@ -14,9 +13,7 @@ class Enemy extends SpriteComponent with HasGameRef {
           size: size,
           position: position,
           anchor: Anchor.center,
-        ) {
-    angle = pi;
-  }
+        );
 
   @override
   void update(double dt) {
