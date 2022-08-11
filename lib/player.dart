@@ -2,6 +2,7 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flutter/material.dart';
+import 'package:game/enemy.dart';
 import 'package:game/game_consts.dart';
 
 enum PlayerState {
@@ -11,6 +12,8 @@ enum PlayerState {
 
 class Player extends SpriteAnimationGroupComponent<PlayerState>
     with HasGameRef, CollisionCallbacks {
+  int health = 5;
+
   final double moveDuration = GameConsts.playerMoveDuration;
   final Curve animationCurve = Curves.easeIn;
   final SpriteAnimation animationIdle;
@@ -55,15 +58,21 @@ class Player extends SpriteAnimationGroupComponent<PlayerState>
     super.onCollision(intersectionPoints, other);
     onCollisionCallback?.call(intersectionPoints, other);
 
-    // if (other is Enemy) {
-    //   size = Vector2.all(256);
-    //   current = PlayerState.explosion;
+    if (other is Enemy) {
+      gameRef.camera.shake(intensity: 10);
+      
+      health -= 1;
+      if (health <= 0) {
+        health = 0;
+        size = Vector2.all(256);
+        current = PlayerState.explosion;
 
-    //   Future.delayed(
-    //     const Duration(seconds: 1),
-    //     () => removeFromParent(),
-    //   );
-    // }
+        Future.delayed(
+          const Duration(seconds: 1),
+          () => removeFromParent(),
+        );
+      }
+    }
   }
 
   void moveLeft() {

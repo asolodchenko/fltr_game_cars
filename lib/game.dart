@@ -1,8 +1,11 @@
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
+import 'package:flame/parallax.dart';
+import 'package:flutter/material.dart';
 import 'package:game/enemy_manager.dart';
 import 'package:game/game_consts.dart';
+import 'package:game/health.dart';
 import 'player.dart';
 
 class MyGame extends FlameGame with PanDetector, HasCollisionDetection {
@@ -16,6 +19,7 @@ class MyGame extends FlameGame with PanDetector, HasCollisionDetection {
 
     /// load game images
     final backgroundImage = await images.load('background.png');
+    final playerImage = await images.load('cars/police.png');
     final enemyImage = await images.load('cars/audi.png');
 
     final policeCar =
@@ -26,7 +30,7 @@ class MyGame extends FlameGame with PanDetector, HasCollisionDetection {
     /// load animations
     final policeCarAnimation = SpriteAnimation.spriteList(
       await Future.wait(policeCar),
-      stepTime: 0.3,
+      stepTime: 0.2,
     );
 
     SpriteAnimation explosionAnimation = SpriteAnimation.spriteList(
@@ -34,6 +38,22 @@ class MyGame extends FlameGame with PanDetector, HasCollisionDetection {
       stepTime: 0.1,
       loop: false,
     );
+
+    final parallaxImages = [
+      ParallaxImageData('background.png'),
+    ];
+
+    final parallax = await loadParallaxComponent(
+      parallaxImages,
+      priority: 0,
+      repeat: ImageRepeat.repeat,
+      baseVelocity: Vector2(0, -50),
+      velocityMultiplierDelta: Vector2(0, 20),
+      alignment: Alignment.center,
+      fill: LayerFill.width,
+    );
+
+    add(parallax);
 
     /// game background component
     background = SpriteComponent(
@@ -47,14 +67,15 @@ class MyGame extends FlameGame with PanDetector, HasCollisionDetection {
       animationIdle: policeCarAnimation,
       animationExplosion: explosionAnimation,
       size: GameConsts.playerSize,
-    )
-      ..position = Vector2(size.x / 2, size.y / 1.4)
-      ..debugMode = GameConsts.debugMode;
+    )..position = Vector2(size.x / 2, size.y / 1.4);
+
     add(player);
 
     /// enemy component
     enemyManager = EnemyManager(sprite: Sprite(enemyImage));
     add(enemyManager);
+
+    add(Health(image: playerImage));
   }
 
   @override

@@ -31,7 +31,6 @@ class EnemyManager extends Component with HasGameRef {
       size: initialSize,
       position: position,
     )
-      ..debugMode = GameConsts.debugMode
       ..debugColor = Colors.red
       ..anchor = Anchor.center;
 
