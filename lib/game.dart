@@ -15,15 +15,24 @@ class MyGame extends FlameGame with PanDetector, HasCollisionDetection {
     await super.onLoad();
 
     /// load game images
-    final enemyImage = await images.load('cars/audi.png');
     final backgroundImage = await images.load('background.png');
+    final enemyImage = await images.load('cars/audi.png');
 
     final policeCar =
         [1, 2, 3].map((i) => Sprite.load('cars/police_animation/$i.png'));
+    final explosion = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+        .map((i) => Sprite.load('explosion/circle_explosion$i.png'));
 
-    final piliceCarAnimation = SpriteAnimation.spriteList(
+    /// load animations
+    final policeCarAnimation = SpriteAnimation.spriteList(
       await Future.wait(policeCar),
-      stepTime: 0.2,
+      stepTime: 0.3,
+    );
+
+    SpriteAnimation explosionAnimation = SpriteAnimation.spriteList(
+      await Future.wait(explosion),
+      stepTime: 0.1,
+      loop: false,
     );
 
     /// game background component
@@ -33,13 +42,14 @@ class MyGame extends FlameGame with PanDetector, HasCollisionDetection {
     );
     // add(background);
 
+    /// player component
     player = Player(
-      animation: piliceCarAnimation,
+      animationIdle: policeCarAnimation,
+      animationExplosion: explosionAnimation,
       size: GameConsts.playerSize,
     )
       ..position = Vector2(size.x / 2, size.y / 1.4)
       ..debugMode = GameConsts.debugMode;
-
     add(player);
 
     /// enemy component

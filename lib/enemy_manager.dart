@@ -6,8 +6,7 @@ import 'package:game/enemy.dart';
 import 'package:game/game_consts.dart';
 
 class EnemyManager extends Component with HasGameRef {
-  /// enemy image sprite
-  final Sprite? sprite;
+  final Sprite sprite;
 
   Random random = Random();
 
@@ -15,7 +14,9 @@ class EnemyManager extends Component with HasGameRef {
   double enemyTimeSpawn = 1;
   late Timer timer;
 
-  EnemyManager({required this.sprite}) : super() {
+  EnemyManager({
+    required this.sprite,
+  }) : super() {
     timer = Timer(enemyTimeSpawn, onTick: _spawnEnemy, repeat: true);
   }
 
@@ -35,10 +36,6 @@ class EnemyManager extends Component with HasGameRef {
       ..anchor = Anchor.center;
 
     gameRef.add(enemy);
-
-    if (position.y < 0) {
-      gameRef.remove(enemy);
-    }
   }
 
   Vector2 _getEnemyPosition(Vector2 initialSize) {
@@ -46,13 +43,13 @@ class EnemyManager extends Component with HasGameRef {
 
     int randomNumber = random.nextInt(3);
 
-    if (randomNumber == 1) {
+    if (randomNumber == 0) {
       /// middle part of the screen
       position = Vector2(gameRef.size.x / 2, 0);
-    } else if (randomNumber == 2) {
+    } else if (randomNumber == 1) {
       /// left part of the screen
       position = Vector2(gameRef.size.x / 4, 0);
-    } else {
+    } else if (randomNumber == 2) {
       /// right part of the screen
       position = Vector2(gameRef.size.x - (gameRef.size.x / 4), 0);
     }

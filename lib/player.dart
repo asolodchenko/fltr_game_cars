@@ -2,27 +2,41 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flutter/material.dart';
-import 'package:game/enemy.dart';
 import 'package:game/game_consts.dart';
 
-class Player extends SpriteAnimationComponent
+enum PlayerState {
+  idle,
+  explosion,
+}
+
+class Player extends SpriteAnimationGroupComponent<PlayerState>
     with HasGameRef, CollisionCallbacks {
-  final double moveDuration = 0.4;
+  final double moveDuration = GameConsts.playerMoveDuration;
   final Curve animationCurve = Curves.easeIn;
+  final SpriteAnimation animationIdle;
+  final SpriteAnimation animationExplosion;
+
+  final removeEffect = RemoveEffect(delay: 1);
+
   bool canMoveLeft = true;
   bool canMoveRight = true;
   bool isCenter = true;
 
   Player({
-    SpriteAnimation? animation,
+    required this.animationIdle,
+    required this.animationExplosion,
     Vector2? size,
     Vector2? position,
     Anchor? anchor,
   }) : super(
-          animation: animation,
           size: size,
           position: position,
           anchor: Anchor.center,
+          animations: {
+            PlayerState.idle: animationIdle,
+            PlayerState.explosion: animationExplosion,
+          },
+          current: PlayerState.idle,
         );
 
   @override
@@ -41,9 +55,15 @@ class Player extends SpriteAnimationComponent
     super.onCollision(intersectionPoints, other);
     onCollisionCallback?.call(intersectionPoints, other);
 
-    if (other is Enemy) {
-      //TODO! implement collision
-    }
+    // if (other is Enemy) {
+    //   size = Vector2.all(256);
+    //   current = PlayerState.explosion;
+
+    //   Future.delayed(
+    //     const Duration(seconds: 1),
+    //     () => removeFromParent(),
+    //   );
+    // }
   }
 
   void moveLeft() {

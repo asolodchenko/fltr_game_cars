@@ -34,7 +34,7 @@ class Enemy extends SpriteComponent with HasGameRef, CollisionCallbacks {
     onCollisionCallback?.call(intersectionPoints, other);
 
     if (other is Player) {
-      //TODO! implement collision
+      removeFromParent();
     }
   }
 
