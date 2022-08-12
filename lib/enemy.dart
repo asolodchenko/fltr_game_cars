@@ -23,7 +23,7 @@ class Enemy extends SpriteComponent with HasGameRef, CollisionCallbacks {
   Future<void> onLoad() async {
     await super.onLoad();
     final hitbox = RectangleHitbox.relative(
-      Vector2(0.5, 0.9),
+      Vector2(0.3, 0.7),
       parentSize: GameConsts.playerSize,
     );
     add(hitbox);
@@ -48,7 +48,7 @@ class Enemy extends SpriteComponent with HasGameRef, CollisionCallbacks {
     super.onCollision(intersectionPoints, other);
     onCollisionCallback?.call(intersectionPoints, other);
 
-    if (other is Player) {
+    if (other is Player || other is Enemy) {
       spriteAnimationComponent.position = position.clone()..y += size.y / 4;
       gameRef.add(spriteAnimationComponent);
 

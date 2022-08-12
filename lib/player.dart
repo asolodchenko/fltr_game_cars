@@ -12,18 +12,18 @@ enum PlayerState {
 
 class Player extends SpriteAnimationGroupComponent<PlayerState>
     with HasGameRef, CollisionCallbacks {
-  int health = 5;
-
-  final double moveDuration = GameConsts.playerMoveDuration;
-  final Curve animationCurve = Curves.easeIn;
   final SpriteAnimation animationIdle;
   final SpriteAnimation animationExplosion;
 
-  final removeEffect = RemoveEffect(delay: 1);
+  final double _moveDuration = GameConsts.playerMoveDuration;
+  final Curve _animationCurve = Curves.easeIn;
 
-  bool canMoveLeft = true;
-  bool canMoveRight = true;
-  bool isCenter = true;
+  int _health = 5;
+  int get health => _health;
+
+  bool _canMoveLeft = true;
+  bool _canMoveRight = true;
+  bool _isCenter = true;
 
   Player({
     required this.animationIdle,
@@ -47,7 +47,7 @@ class Player extends SpriteAnimationGroupComponent<PlayerState>
     await super.onLoad();
 
     final hitbox = RectangleHitbox.relative(
-      Vector2(0.5, 0.9),
+      Vector2(0.3, 0.7),
       parentSize: GameConsts.playerSize,
     );
     add(hitbox);
@@ -60,15 +60,15 @@ class Player extends SpriteAnimationGroupComponent<PlayerState>
 
     if (other is Enemy) {
       gameRef.camera.shake(intensity: 10);
-      
-      health -= 1;
-      if (health <= 0) {
-        health = 0;
+
+      _health -= 1;
+      if (_health <= 0) {
+        _health = 0;
         size = Vector2.all(256);
         current = PlayerState.explosion;
 
         Future.delayed(
-          const Duration(seconds: 1),
+          const Duration(milliseconds: 500),
           () => removeFromParent(),
         );
       }
@@ -79,14 +79,14 @@ class Player extends SpriteAnimationGroupComponent<PlayerState>
     final effect = MoveByEffect(
         Vector2(-gameRef.size.x / 4, 0),
         EffectController(
-          duration: moveDuration,
-          curve: animationCurve,
+          duration: _moveDuration,
+          curve: _animationCurve,
         ));
-    if (canMoveLeft) {
+    if (_canMoveLeft) {
       add(effect);
-      isCenter = !isCenter;
-      canMoveLeft = isCenter;
-      canMoveRight = true;
+      _isCenter = !_isCenter;
+      _canMoveLeft = _isCenter;
+      _canMoveRight = true;
     }
   }
 
@@ -94,14 +94,18 @@ class Player extends SpriteAnimationGroupComponent<PlayerState>
     final effect = MoveByEffect(
         Vector2(gameRef.size.x / 4, 0),
         EffectController(
-          duration: moveDuration,
-          curve: animationCurve,
+          duration: _moveDuration,
+          curve: _animationCurve,
         ));
-    if (canMoveRight) {
+    if (_canMoveRight) {
       add(effect);
-      isCenter = !isCenter;
-      canMoveRight = isCenter;
-      canMoveLeft = true;
+      _isCenter = !_isCenter;
+      _canMoveRight = _isCenter;
+      _canMoveLeft = true;
     }
+  }
+
+  void setHealth(int health) {
+    _health = health;
   }
 }

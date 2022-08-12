@@ -8,16 +8,16 @@ import 'package:game/game_consts.dart';
 class EnemyManager extends Component with HasGameRef {
   final Sprite sprite;
 
-  Random random = Random();
+  final _random = Random();
 
   /// time of respawning enemies
-  double enemyTimeSpawn = 1;
-  late Timer timer;
+  final double _enemyTimeSpawn = 0.9;
+  late Timer _timer;
 
   EnemyManager({
     required this.sprite,
   }) : super() {
-    timer = Timer(enemyTimeSpawn, onTick: _spawnEnemy, repeat: true);
+    _timer = Timer(_enemyTimeSpawn, onTick: _spawnEnemy, repeat: true);
   }
 
   void _spawnEnemy() {
@@ -40,7 +40,7 @@ class EnemyManager extends Component with HasGameRef {
   Vector2 _getEnemyPosition(Vector2 initialSize) {
     Vector2 position = Vector2(0, 0);
 
-    int randomNumber = random.nextInt(3);
+    int randomNumber = _random.nextInt(3);
 
     if (randomNumber == 0) {
       /// middle part of the screen
@@ -58,16 +58,16 @@ class EnemyManager extends Component with HasGameRef {
 
   @override
   void onMount() {
-    timer.start();
+    _timer.start();
   }
 
   @override
   void onRemove() {
-    timer.stop();
+    _timer.stop();
   }
 
   @override
   void update(double dt) {
-    timer.update(dt);
+    _timer.update(dt);
   }
 }

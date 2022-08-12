@@ -23,6 +23,7 @@ class Health extends TextComponent with HasGameRef<MyGame> {
     gameRef.add(healthComponent);
 
     health = gameRef.player.health.toString();
+
     priority = 1;
     positionType = PositionType.viewport;
     text = 'x $health';

@@ -3,22 +3,26 @@ import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flame/parallax.dart';
 import 'package:flutter/material.dart';
+import 'package:game/command.dart';
 import 'package:game/enemy_manager.dart';
 import 'package:game/game_consts.dart';
 import 'package:game/health.dart';
 import 'player.dart';
 
 class MyGame extends FlameGame with PanDetector, HasCollisionDetection {
-  late Player player;
-  late EnemyManager enemyManager;
-  late SpriteComponent background;
+  late Player _player;
+  late EnemyManager _enemyManager;
+
+  Player get player => _player;
+
+  final _comandList = List<Command>.empty(growable: true);
+  final _addLaterComandList = List<Command>.empty(growable: true);
 
   @override
   Future<void> onLoad() async {
     await super.onLoad();
 
     /// load game images
-    final backgroundImage = await images.load('background.png');
     final playerImage = await images.load('cars/police.png');
     final enemyImage = await images.load('cars/audi.png');
 
@@ -33,7 +37,7 @@ class MyGame extends FlameGame with PanDetector, HasCollisionDetection {
       stepTime: 0.2,
     );
 
-    SpriteAnimation explosionAnimation = SpriteAnimation.spriteList(
+    final explosionAnimation = SpriteAnimation.spriteList(
       await Future.wait(explosion),
       stepTime: 0.1,
       loop: false,
@@ -55,25 +59,18 @@ class MyGame extends FlameGame with PanDetector, HasCollisionDetection {
 
     add(parallax);
 
-    /// game background component
-    background = SpriteComponent(
-      sprite: Sprite(backgroundImage),
-      size: size,
-    );
-    // add(background);
-
     /// player component
-    player = Player(
+    _player = Player(
       animationIdle: policeCarAnimation,
       animationExplosion: explosionAnimation,
       size: GameConsts.playerSize,
     )..position = Vector2(size.x / 2, size.y / 1.4);
 
-    add(player);
+    add(_player);
 
     /// enemy component
-    enemyManager = EnemyManager(sprite: Sprite(enemyImage));
-    add(enemyManager);
+    _enemyManager = EnemyManager(sprite: Sprite(enemyImage));
+    add(_enemyManager);
 
     add(Health(image: playerImage));
   }
@@ -81,10 +78,28 @@ class MyGame extends FlameGame with PanDetector, HasCollisionDetection {
   @override
   void onPanDown(DragDownInfo info) {
     if (info.eventPosition.game.x < size.x / 2) {
-      player.moveLeft();
+      _player.moveLeft();
     } else if (info.eventPosition.game.x > size.x / 2) {
-      player.moveRight();
+      _player.moveRight();
     }
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    for (var command in _comandList) {
+      for (var component in children) {
+        command.runComponent(component);
+      }
+    }
+
+    _comandList.clear();
+    _comandList.addAll(_addLaterComandList);
+    _addLaterComandList.clear();
+  }
+
+  void addCommand(Command command) {
+    _addLaterComandList.add(command);
   }
 
   /// this is swipe detection
