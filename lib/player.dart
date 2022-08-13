@@ -83,7 +83,7 @@ class Player extends SpriteAnimationGroupComponent<PlayerState>
 
     if (other is Ambulance) {
       gameRef.camera.shake(intensity: 10);
-      changePlayerDirecton();
+      changePlayerDirecton(other);
       _health -= 1;
       if (_health <= 0) {
         _health = 0;
@@ -98,12 +98,12 @@ class Player extends SpriteAnimationGroupComponent<PlayerState>
     }
   }
 
-  void changePlayerDirecton() {
-    if (position.x == gameRef.size.x / 2) {
+  void changePlayerDirecton(Ambulance other) {
+    if (other.position.x == gameRef.size.x / 2) {
       _random.nextBool() ? moveLeft() : moveRight();
-    } else if (position.x == gameRef.size.x / 4) {
+    } else if (other.position.x == gameRef.size.x / 4) {
       moveRight();
-    } else if (position.x == gameRef.size.x - (gameRef.size.x / 4)) {
+    } else if (other.position.x == gameRef.size.x - (gameRef.size.x / 4)) {
       moveLeft();
     }
   }
