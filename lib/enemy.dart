@@ -1,5 +1,6 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:game/ambulance.dart';
 import 'package:game/game_consts.dart';
 import 'package:game/player.dart';
 
@@ -48,7 +49,7 @@ class Enemy extends SpriteComponent with HasGameRef, CollisionCallbacks {
     super.onCollision(intersectionPoints, other);
     onCollisionCallback?.call(intersectionPoints, other);
 
-    if (other is Player || other is Enemy) {
+    if (other is Player || other is Enemy || other is Ambulance) {
       spriteAnimationComponent.position = position.clone()..y += size.y / 4;
       gameRef.add(spriteAnimationComponent);
 

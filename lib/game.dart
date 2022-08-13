@@ -3,6 +3,7 @@ import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flame/parallax.dart';
 import 'package:flutter/material.dart';
+import 'package:game/ambulance_manager.dart';
 import 'package:game/command.dart';
 import 'package:game/enemy_manager.dart';
 import 'package:game/game_consts.dart';
@@ -12,6 +13,7 @@ import 'player.dart';
 class MyGame extends FlameGame with PanDetector, HasCollisionDetection {
   late Player _player;
   late EnemyManager _enemyManager;
+  late AmbulanceManager _ambulanceManager;
 
   Player get player => _player;
 
@@ -30,17 +32,22 @@ class MyGame extends FlameGame with PanDetector, HasCollisionDetection {
         [1, 2, 3].map((i) => Sprite.load('cars/police_animation/$i.png'));
     final explosion = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
         .map((i) => Sprite.load('explosion/circle_explosion$i.png'));
+    final ambulanceCar =
+        [1, 2, 3].map((i) => Sprite.load('cars/ambulance_animation/$i.png'));
 
     /// load animations
     final policeCarAnimation = SpriteAnimation.spriteList(
       await Future.wait(policeCar),
       stepTime: 0.2,
     );
-
     final explosionAnimation = SpriteAnimation.spriteList(
       await Future.wait(explosion),
       stepTime: 0.1,
       loop: false,
+    );
+    final ambulanceAnimation = SpriteAnimation.spriteList(
+      await Future.wait(ambulanceCar),
+      stepTime: 0.2,
     );
 
     final parallaxImages = [
@@ -72,6 +79,11 @@ class MyGame extends FlameGame with PanDetector, HasCollisionDetection {
     _enemyManager = EnemyManager(sprite: Sprite(enemyImage));
     add(_enemyManager);
 
+    /// ambulance component
+    _ambulanceManager = AmbulanceManager(animation: ambulanceAnimation);
+    add(_ambulanceManager);
+
+    /// health component
     add(Health(image: playerImage));
   }
 
