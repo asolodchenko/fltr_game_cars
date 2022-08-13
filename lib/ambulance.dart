@@ -1,9 +1,10 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:game/game.dart';
 import 'package:game/game_consts.dart';
 
 class Ambulance extends SpriteAnimationComponent
-    with HasGameRef, CollisionCallbacks {
+    with HasGameRef<MyGame>, CollisionCallbacks {
   final double _speed = 200;
 
   Ambulance({

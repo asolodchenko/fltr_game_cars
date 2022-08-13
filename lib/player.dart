@@ -1,8 +1,12 @@
+import 'dart:math';
+
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flutter/material.dart';
+import 'package:game/ambulance.dart';
 import 'package:game/enemy.dart';
+import 'package:game/game.dart';
 import 'package:game/game_consts.dart';
 
 enum PlayerState {
@@ -11,9 +15,11 @@ enum PlayerState {
 }
 
 class Player extends SpriteAnimationGroupComponent<PlayerState>
-    with HasGameRef, CollisionCallbacks {
+    with HasGameRef<MyGame>, CollisionCallbacks {
   final SpriteAnimation animationIdle;
   final SpriteAnimation animationExplosion;
+
+  final _random = Random();
 
   final double _moveDuration = GameConsts.playerMoveDuration;
   final Curve _animationCurve = Curves.easeIn;
@@ -54,8 +60,9 @@ class Player extends SpriteAnimationGroupComponent<PlayerState>
   }
 
   @override
-  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
-    super.onCollision(intersectionPoints, other);
+  void onCollisionStart(
+      Set<Vector2> intersectionPoints, PositionComponent other) {
+    super.onCollisionStart(intersectionPoints, other);
     onCollisionCallback?.call(intersectionPoints, other);
 
     if (other is Enemy) {
@@ -72,6 +79,32 @@ class Player extends SpriteAnimationGroupComponent<PlayerState>
           () => removeFromParent(),
         );
       }
+    }
+
+    if (other is Ambulance) {
+      gameRef.camera.shake(intensity: 10);
+      changePlayerDirecton();
+      _health -= 1;
+      if (_health <= 0) {
+        _health = 0;
+        size = Vector2.all(256);
+        current = PlayerState.explosion;
+
+        Future.delayed(
+          const Duration(milliseconds: 500),
+          () => removeFromParent(),
+        );
+      }
+    }
+  }
+
+  void changePlayerDirecton() {
+    if (position.x == gameRef.size.x / 2) {
+      _random.nextBool() ? moveLeft() : moveRight();
+    } else if (position.x == gameRef.size.x / 4) {
+      moveRight();
+    } else if (position.x == gameRef.size.x - (gameRef.size.x / 4)) {
+      moveLeft();
     }
   }
 

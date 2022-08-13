@@ -12,7 +12,7 @@ class AmbulanceManager extends Component with HasGameRef {
   final _random = Random();
 
   /// time of respawning enemies
-  final double _enemyTimeSpawn = 10;
+  final double _enemyTimeSpawn = 30;
   late Timer _timer;
 
   AmbulanceManager({
