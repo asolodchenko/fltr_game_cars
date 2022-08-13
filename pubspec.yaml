@@ -28,6 +28,8 @@ flutter:
   assets:
     - assets/images/
     - assets/images/cars/
+    - assets/images/smoke/
+    - assets/images/fire/
     - assets/images/cars/police_animation/
     - assets/images/cars/ambulance_animation/
     - assets/images/explosion/ 

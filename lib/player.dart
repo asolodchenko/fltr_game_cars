@@ -84,17 +84,17 @@ class Player extends SpriteAnimationGroupComponent<PlayerState>
     if (other is Ambulance) {
       gameRef.camera.shake(intensity: 10);
       changePlayerDirecton(other);
-      _health -= 1;
-      if (_health <= 0) {
-        _health = 0;
-        size = Vector2.all(256);
-        current = PlayerState.explosion;
+      // _health -= 1;
+      // if (_health <= 0) {
+      //   _health = 0;
+      //   size = Vector2.all(256);
+      //   current = PlayerState.explosion;
 
-        Future.delayed(
-          const Duration(milliseconds: 500),
-          () => removeFromParent(),
-        );
-      }
+      //   Future.delayed(
+      //     const Duration(milliseconds: 500),
+      //     () => removeFromParent(),
+      //   );
+      // }
     }
   }
 

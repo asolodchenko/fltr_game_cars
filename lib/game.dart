@@ -14,6 +14,8 @@ class MyGame extends FlameGame with PanDetector, HasCollisionDetection {
   late Player _player;
   late EnemyManager _enemyManager;
   late AmbulanceManager _ambulanceManager;
+  late SpriteAnimationComponent _fireComponent;
+  late SpriteAnimationComponent _smokeComponent;
 
   Player get player => _player;
 
@@ -34,6 +36,8 @@ class MyGame extends FlameGame with PanDetector, HasCollisionDetection {
         .map((i) => Sprite.load('explosion/circle_explosion$i.png'));
     final ambulanceCar =
         [1, 2, 3].map((i) => Sprite.load('cars/ambulance_animation/$i.png'));
+    final fire = [1, 2, 3, 4, 5, 6].map((i) => Sprite.load('fire/$i.png'));
+    final smoke = [1, 2, 3, 4, 5, 6].map((i) => Sprite.load('smoke/$i.png'));
 
     /// load animations
     final policeCarAnimation = SpriteAnimation.spriteList(
@@ -49,6 +53,16 @@ class MyGame extends FlameGame with PanDetector, HasCollisionDetection {
       await Future.wait(ambulanceCar),
       stepTime: 0.2,
     );
+    final fireAnimaiton = SpriteAnimation.spriteList(
+      await Future.wait(fire),
+      stepTime: 0.2,
+      loop: true,
+    );
+    final smokeAnimaiton = SpriteAnimation.spriteList(
+      await Future.wait(smoke),
+      stepTime: 0.2,
+      loop: true,
+    );
 
     final parallaxImages = [
       ParallaxImageData('background.png'),
@@ -63,7 +77,6 @@ class MyGame extends FlameGame with PanDetector, HasCollisionDetection {
       alignment: Alignment.center,
       fill: LayerFill.width,
     );
-
     add(parallax);
 
     /// player component
@@ -72,7 +85,6 @@ class MyGame extends FlameGame with PanDetector, HasCollisionDetection {
       animationExplosion: explosionAnimation,
       size: GameConsts.playerSize,
     )..position = Vector2(size.x / 2, size.y / 1.4);
-
     add(_player);
 
     /// enemy component
@@ -82,6 +94,20 @@ class MyGame extends FlameGame with PanDetector, HasCollisionDetection {
     /// ambulance component
     _ambulanceManager = AmbulanceManager(animation: ambulanceAnimation);
     add(_ambulanceManager);
+
+    /// smoke component
+    _smokeComponent = SpriteAnimationComponent(animation: smokeAnimaiton)
+      ..position = player.position
+      ..anchor = Anchor.center
+      ..size = Vector2.all(0);
+    add(_smokeComponent);
+
+    /// fire component
+    _fireComponent = SpriteAnimationComponent(animation: fireAnimaiton)
+      ..position = player.position
+      ..anchor = Anchor.center
+      ..size = Vector2.all(0);
+    add(_fireComponent);
 
     /// health component
     add(Health(image: playerImage));
@@ -99,15 +125,39 @@ class MyGame extends FlameGame with PanDetector, HasCollisionDetection {
   @override
   void update(double dt) {
     super.update(dt);
+    _updateComands();
+    _getPlayerCarBurning();
+  }
+
+  void _updateComands() {
     for (var command in _comandList) {
       for (var component in children) {
         command.runComponent(component);
       }
     }
-
     _comandList.clear();
     _comandList.addAll(_addLaterComandList);
     _addLaterComandList.clear();
+  }
+
+  void _getPlayerCarBurning() {
+    _fireComponent.position =
+        Vector2(player.position.x, player.position.y - player.size.y / 2);
+    _smokeComponent.position =
+        Vector2(player.position.x, player.position.y - player.size.y / 2);
+
+    if (player.health == 3) {
+      _smokeComponent.size = Vector2.all(48);
+    } else if (player.health == 2) {
+      _fireComponent.size = Vector2.all(48);
+      _smokeComponent.size = Vector2.all(48);
+    } else if (player.health == 1) {
+      _fireComponent.size = Vector2.all(64);
+      _smokeComponent.size = Vector2.all(64);
+    } else if (player.health == 0) {
+      _fireComponent.size = Vector2.all(0);
+      _smokeComponent.size = Vector2.all(0);
+    }
   }
 
   void addCommand(Command command) {
