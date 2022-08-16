@@ -5,6 +5,7 @@ import 'package:flame/parallax.dart';
 import 'package:flutter/material.dart';
 import 'package:game/ambulance_manager.dart';
 import 'package:game/command.dart';
+import 'package:game/enemy.dart';
 import 'package:game/enemy_manager.dart';
 import 'package:game/game_consts.dart';
 import 'package:game/health.dart';
@@ -17,6 +18,8 @@ class MyGame extends FlameGame with PanDetector, HasCollisionDetection {
   late SpriteAnimationComponent _fireComponent;
   late SpriteAnimationComponent _smokeComponent;
 
+  bool isAlreadyLoaded = false;
+
   Player get player => _player;
 
   final _comandList = List<Command>.empty(growable: true);
@@ -26,91 +29,95 @@ class MyGame extends FlameGame with PanDetector, HasCollisionDetection {
   Future<void> onLoad() async {
     await super.onLoad();
 
-    /// load game images
-    final playerImage = await images.load('cars/police.png');
-    final enemyImage = await images.load('cars/audi.png');
+    if (!isAlreadyLoaded) {
+      /// load game images
+      final playerImage = await images.load('cars/police.png');
+      final enemyImage = await images.load('cars/audi.png');
 
-    final policeCar =
-        [1, 2, 3].map((i) => Sprite.load('cars/police_animation/$i.png'));
-    final explosion = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
-        .map((i) => Sprite.load('explosion/circle_explosion$i.png'));
-    final ambulanceCar =
-        [1, 2, 3].map((i) => Sprite.load('cars/ambulance_animation/$i.png'));
-    final fire = [1, 2, 3, 4, 5, 6].map((i) => Sprite.load('fire/$i.png'));
-    final smoke = [1, 2, 3, 4, 5, 6].map((i) => Sprite.load('smoke/$i.png'));
+      final policeCar =
+          [1, 2, 3].map((i) => Sprite.load('cars/police_animation/$i.png'));
+      final explosion = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+          .map((i) => Sprite.load('explosion/circle_explosion$i.png'));
+      final ambulanceCar =
+          [1, 2, 3].map((i) => Sprite.load('cars/ambulance_animation/$i.png'));
+      final fire = [1, 2, 3, 4, 5, 6].map((i) => Sprite.load('fire/$i.png'));
+      final smoke = [1, 2, 3, 4, 5, 6].map((i) => Sprite.load('smoke/$i.png'));
 
-    /// load animations
-    final policeCarAnimation = SpriteAnimation.spriteList(
-      await Future.wait(policeCar),
-      stepTime: 0.2,
-    );
-    final explosionAnimation = SpriteAnimation.spriteList(
-      await Future.wait(explosion),
-      stepTime: 0.1,
-      loop: false,
-    );
-    final ambulanceAnimation = SpriteAnimation.spriteList(
-      await Future.wait(ambulanceCar),
-      stepTime: 0.2,
-    );
-    final fireAnimaiton = SpriteAnimation.spriteList(
-      await Future.wait(fire),
-      stepTime: 0.2,
-      loop: true,
-    );
-    final smokeAnimaiton = SpriteAnimation.spriteList(
-      await Future.wait(smoke),
-      stepTime: 0.2,
-      loop: true,
-    );
+      /// load animations
+      final policeCarAnimation = SpriteAnimation.spriteList(
+        await Future.wait(policeCar),
+        stepTime: 0.2,
+      );
+      final explosionAnimation = SpriteAnimation.spriteList(
+        await Future.wait(explosion),
+        stepTime: 0.1,
+        loop: false,
+      );
+      final ambulanceAnimation = SpriteAnimation.spriteList(
+        await Future.wait(ambulanceCar),
+        stepTime: 0.2,
+      );
+      final fireAnimaiton = SpriteAnimation.spriteList(
+        await Future.wait(fire),
+        stepTime: 0.2,
+        loop: true,
+      );
+      final smokeAnimaiton = SpriteAnimation.spriteList(
+        await Future.wait(smoke),
+        stepTime: 0.2,
+        loop: true,
+      );
 
-    final parallaxImages = [
-      ParallaxImageData('background.png'),
-    ];
+      final parallaxImages = [
+        ParallaxImageData('background.png'),
+      ];
 
-    final parallax = await loadParallaxComponent(
-      parallaxImages,
-      priority: 0,
-      repeat: ImageRepeat.repeat,
-      baseVelocity: Vector2(0, -50),
-      velocityMultiplierDelta: Vector2(0, 20),
-      alignment: Alignment.center,
-      fill: LayerFill.width,
-    );
-    add(parallax);
+      final parallax = await loadParallaxComponent(
+        parallaxImages,
+        priority: 0,
+        repeat: ImageRepeat.repeat,
+        baseVelocity: Vector2(0, -50),
+        velocityMultiplierDelta: Vector2(0, 20),
+        alignment: Alignment.center,
+        fill: LayerFill.width,
+      );
+      add(parallax);
 
-    /// player component
-    _player = Player(
-      animationIdle: policeCarAnimation,
-      animationExplosion: explosionAnimation,
-      size: GameConsts.playerSize,
-    )..position = Vector2(size.x / 2, size.y / 1.4);
-    add(_player);
+      /// player component
+      _player = Player(
+        animationIdle: policeCarAnimation,
+        animationExplosion: explosionAnimation,
+        size: GameConsts.playerSize,
+      )..position = Vector2(size.x / 2, size.y / 1.4);
+      add(_player);
 
-    /// enemy component
-    _enemyManager = EnemyManager(sprite: Sprite(enemyImage));
-    add(_enemyManager);
+      /// enemy component
+      _enemyManager = EnemyManager(sprite: Sprite(enemyImage));
+      add(_enemyManager);
 
-    /// ambulance component
-    _ambulanceManager = AmbulanceManager(animation: ambulanceAnimation);
-    add(_ambulanceManager);
+      /// ambulance component
+      _ambulanceManager = AmbulanceManager(animation: ambulanceAnimation);
+      add(_ambulanceManager);
 
-    /// smoke component
-    _smokeComponent = SpriteAnimationComponent(animation: smokeAnimaiton)
-      ..position = player.position
-      ..anchor = Anchor.center
-      ..size = Vector2.all(0);
-    add(_smokeComponent);
+      /// smoke component
+      _smokeComponent = SpriteAnimationComponent(animation: smokeAnimaiton)
+        ..position = player.position
+        ..anchor = Anchor.center
+        ..size = Vector2.all(0);
+      add(_smokeComponent);
 
-    /// fire component
-    _fireComponent = SpriteAnimationComponent(animation: fireAnimaiton)
-      ..position = player.position
-      ..anchor = Anchor.center
-      ..size = Vector2.all(0);
-    add(_fireComponent);
+      /// fire component
+      _fireComponent = SpriteAnimationComponent(animation: fireAnimaiton)
+        ..size = Vector2.all(0)
+        ..position = player.position
+        ..anchor = Anchor.center;
 
-    /// health component
-    add(Health(image: playerImage));
+      add(_fireComponent);
+
+      /// health component
+      // add(Health(image: playerImage));
+      isAlreadyLoaded = false;
+    }
   }
 
   @override
@@ -162,6 +169,22 @@ class MyGame extends FlameGame with PanDetector, HasCollisionDetection {
 
   void addCommand(Command command) {
     _addLaterComandList.add(command);
+  }
+
+  void reset() {
+    _player.reset();
+    _enemyManager.reset();
+    _ambulanceManager.reset();
+    _fireComponent
+      ..size = Vector2.all(0)
+      ..position = player.position;
+    _smokeComponent
+      ..size = Vector2.all(0)
+      ..position = player.position;
+
+    children.whereType<Enemy>().forEach((enemy) {
+      enemy.removeFromParent();
+    });
   }
 
   /// this is swipe detection

@@ -70,4 +70,9 @@ class EnemyManager extends Component with HasGameRef {
   void update(double dt) {
     _timer.update(dt);
   }
+
+  void reset() {
+    _timer.stop();
+    _timer.start();
+  }
 }

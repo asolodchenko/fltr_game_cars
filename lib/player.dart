@@ -141,4 +141,8 @@ class Player extends SpriteAnimationGroupComponent<PlayerState>
   void setHealth(int health) {
     _health = health;
   }
+
+  void reset() {
+    _health = 5;
+  }
 }
