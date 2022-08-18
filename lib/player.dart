@@ -19,6 +19,8 @@ class Player extends SpriteAnimationGroupComponent<PlayerState>
   final SpriteAnimation animationIdle;
   final SpriteAnimation animationExplosion;
 
+  late RectangleHitbox hitbox;
+
   final _random = Random();
 
   final double _moveDuration = GameConsts.playerMoveDuration;
@@ -52,11 +54,19 @@ class Player extends SpriteAnimationGroupComponent<PlayerState>
   Future<void> onLoad() async {
     await super.onLoad();
 
-    final hitbox = RectangleHitbox.relative(
+    hitbox = RectangleHitbox.relative(
       Vector2(0.3, 0.7),
       parentSize: GameConsts.playerSize,
     );
     add(hitbox);
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    if (health <= 0) {
+      hitbox.removeFromParent();
+    }
   }
 
   @override
@@ -138,6 +148,9 @@ class Player extends SpriteAnimationGroupComponent<PlayerState>
   }
 
   void reset() {
+    if (hitbox.parent == null) {
+      add(hitbox);
+    }
     _health = 5;
     current = PlayerState.idle;
     size = GameConsts.playerSize;

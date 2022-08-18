@@ -14,6 +14,10 @@ import 'package:game/widgets/overlays/pause_button.dart';
 import 'package:game/widgets/overlays/pause_menu.dart';
 import 'player.dart';
 
+//TODO! Change player explosion animation
+//TODO! Add scores timer
+//TODO! Add coins count
+//TODO! Add background to ui elements on canvas
 class MyGame extends FlameGame with PanDetector, HasCollisionDetection {
   late Player _player;
   late EnemyManager _enemyManager;
@@ -138,6 +142,11 @@ class MyGame extends FlameGame with PanDetector, HasCollisionDetection {
     super.update(dt);
     _updateComands();
     _getPlayerCarBurning();
+
+    if (_player.health <= 0 && !(camera.shaking)) {
+      overlays.remove(PauseButton.id);
+      overlays.add(GameOverMenu.id);
+    }
   }
 
   void _updateComands() {
@@ -149,12 +158,6 @@ class MyGame extends FlameGame with PanDetector, HasCollisionDetection {
     _comandList.clear();
     _comandList.addAll(_addLaterComandList);
     _addLaterComandList.clear();
-
-    if (_player.health <= 0 && !(camera.shaking)) {
-      pauseEngine();
-      overlays.remove(PauseButton.id);
-      overlays.add(GameOverMenu.id);
-    }
   }
 
   @override

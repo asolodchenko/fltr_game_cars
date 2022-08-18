@@ -54,6 +54,8 @@ class Enemy extends SpriteComponent with HasGameRef, CollisionCallbacks {
       gameRef.add(spriteAnimationComponent);
 
       removeFromParent();
+      Future.delayed(const Duration(seconds: 1),
+          () => spriteAnimationComponent.removeFromParent());
     }
   }
 

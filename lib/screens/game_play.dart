@@ -58,7 +58,7 @@ class GamePlay extends StatelessWidget {
                     gameRef.reset();
                   },
                   onPressedExit: () {
-                    // gameRef.resumeEngine();
+                    gameRef.resumeEngine();
                     gameRef.overlays.remove(GameOverMenu.id);
                     gameRef.reset();
                     Navigator.of(context).pushReplacement(MaterialPageRoute(
