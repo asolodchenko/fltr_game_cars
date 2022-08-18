@@ -2,6 +2,7 @@ import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:game/game.dart';
 import 'package:game/screens/main_menu.dart';
+import 'package:game/widgets/overlays/game_over.menu.dart';
 import 'package:game/widgets/overlays/pause_button.dart';
 import 'package:game/widgets/overlays/pause_menu.dart';
 
@@ -42,6 +43,23 @@ class GamePlay extends StatelessWidget {
                   onPressedExit: () {
                     gameRef.resumeEngine();
                     gameRef.overlays.remove(PauseMenu.id);
+                    gameRef.reset();
+                    Navigator.of(context).pushReplacement(MaterialPageRoute(
+                      builder: ((context) => const MainMenu()),
+                    ));
+                  },
+                ),
+            GameOverMenu.id: (BuildContext context, MyGame gameRef) =>
+                GameOverMenu(
+                  onPressedRestart: () {
+                    gameRef.overlays.remove(GameOverMenu.id);
+                    gameRef.overlays.add(PauseButton.id);
+                    gameRef.resumeEngine();
+                    gameRef.reset();
+                  },
+                  onPressedExit: () {
+                    // gameRef.resumeEngine();
+                    gameRef.overlays.remove(GameOverMenu.id);
                     gameRef.reset();
                     Navigator.of(context).pushReplacement(MaterialPageRoute(
                       builder: ((context) => const MainMenu()),

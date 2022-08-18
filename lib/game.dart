@@ -9,6 +9,9 @@ import 'package:game/enemy.dart';
 import 'package:game/enemy_manager.dart';
 import 'package:game/game_consts.dart';
 import 'package:game/health.dart';
+import 'package:game/widgets/overlays/game_over.menu.dart';
+import 'package:game/widgets/overlays/pause_button.dart';
+import 'package:game/widgets/overlays/pause_menu.dart';
 import 'player.dart';
 
 class MyGame extends FlameGame with PanDetector, HasCollisionDetection {
@@ -31,7 +34,7 @@ class MyGame extends FlameGame with PanDetector, HasCollisionDetection {
 
     if (!isAlreadyLoaded) {
       /// load game images
-      final playerImage = await images.load('cars/police.png');
+      final playerSmallImage = await images.load('cars/police.png');
       final enemyImage = await images.load('cars/audi.png');
 
       final policeCar =
@@ -88,9 +91,7 @@ class MyGame extends FlameGame with PanDetector, HasCollisionDetection {
         animationIdle: policeCarAnimation,
         animationExplosion: explosionAnimation,
         size: GameConsts.playerSize,
-      )
-        ..position = Vector2(size.x / 2, size.y / 1.4)
-        ..debugMode = true;
+      )..position = Vector2(size.x / 2, size.y / 1.4);
 
       add(_player);
 
@@ -148,6 +149,30 @@ class MyGame extends FlameGame with PanDetector, HasCollisionDetection {
     _comandList.clear();
     _comandList.addAll(_addLaterComandList);
     _addLaterComandList.clear();
+
+    if (_player.health <= 0 && !(camera.shaking)) {
+      pauseEngine();
+      overlays.remove(PauseButton.id);
+      overlays.add(GameOverMenu.id);
+    }
+  }
+
+  @override
+  void lifecycleStateChange(AppLifecycleState state) {
+    super.lifecycleStateChange(state);
+    switch (state) {
+      case AppLifecycleState.resumed:
+        break;
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.paused:
+      case AppLifecycleState.detached:
+        if (_player.health > 0) {
+          pauseEngine();
+          overlays.remove(PauseButton.id);
+          overlays.add(PauseMenu.id);
+        }
+        break;
+    }
   }
 
   void _getPlayerCarBurning() {
@@ -156,6 +181,10 @@ class MyGame extends FlameGame with PanDetector, HasCollisionDetection {
     _smokeComponent.position =
         Vector2(player.position.x, player.position.y - player.size.y / 2);
 
+    _setPlayersCarFireSize();
+  }
+
+  void _setPlayersCarFireSize() {
     if (player.health == 3) {
       _smokeComponent.size = Vector2.all(48);
     } else if (player.health == 2) {
