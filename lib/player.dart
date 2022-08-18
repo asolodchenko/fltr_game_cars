@@ -73,11 +73,6 @@ class Player extends SpriteAnimationGroupComponent<PlayerState>
         _health = 0;
         size = Vector2.all(256);
         current = PlayerState.explosion;
-
-        Future.delayed(
-          const Duration(milliseconds: 500),
-          () => removeFromParent(),
-        );
       }
     }
 
@@ -144,5 +139,11 @@ class Player extends SpriteAnimationGroupComponent<PlayerState>
 
   void reset() {
     _health = 5;
+    current = PlayerState.idle;
+    size = GameConsts.playerSize;
+    position = Vector2(gameRef.size.x / 2, gameRef.size.y / 1.4);
+    _canMoveLeft = true;
+    _canMoveRight = true;
+    _isCenter = true;
   }
 }

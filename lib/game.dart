@@ -88,7 +88,10 @@ class MyGame extends FlameGame with PanDetector, HasCollisionDetection {
         animationIdle: policeCarAnimation,
         animationExplosion: explosionAnimation,
         size: GameConsts.playerSize,
-      )..position = Vector2(size.x / 2, size.y / 1.4);
+      )
+        ..position = Vector2(size.x / 2, size.y / 1.4)
+        ..debugMode = true;
+
       add(_player);
 
       /// enemy component

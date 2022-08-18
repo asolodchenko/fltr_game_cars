@@ -4,11 +4,13 @@ import '../game_button.dart';
 
 class PauseMenu extends StatelessWidget {
   final void Function()? onPressedResume;
+  final void Function()? onPressedRestart;
   final void Function()? onPressedExit;
   static const String id = 'PauseMenu';
 
   const PauseMenu({
     required this.onPressedResume,
+    required this.onPressedRestart,
     required this.onPressedExit,
     Key? key,
   }) : super(key: key);
@@ -36,7 +38,11 @@ class PauseMenu extends StatelessWidget {
             onPressed: onPressedResume,
             textColor: Colors.white,
           ),
-          //TODO! restart button ?
+          GameButton(
+            text: 'Restart',
+            onPressed: onPressedRestart,
+            textColor: Colors.white,
+          ),
           GameButton(
             text: 'Exit',
             textColor: Colors.white,

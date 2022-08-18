@@ -33,6 +33,12 @@ class GamePlay extends StatelessWidget {
                     gameRef.overlays.remove(PauseMenu.id);
                     gameRef.overlays.add(PauseButton.id);
                   },
+                  onPressedRestart: () {
+                    gameRef.overlays.remove(PauseMenu.id);
+                    gameRef.overlays.add(PauseButton.id);
+                    gameRef.resumeEngine();
+                    gameRef.reset();
+                  },
                   onPressedExit: () {
                     gameRef.resumeEngine();
                     gameRef.overlays.remove(PauseMenu.id);
