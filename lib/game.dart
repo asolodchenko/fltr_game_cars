@@ -9,13 +9,14 @@ import 'package:game/enemy.dart';
 import 'package:game/enemy_manager.dart';
 import 'package:game/game_consts.dart';
 import 'package:game/health.dart';
+import 'package:game/score.dart';
 import 'package:game/widgets/overlays/game_over.menu.dart';
 import 'package:game/widgets/overlays/pause_button.dart';
 import 'package:game/widgets/overlays/pause_menu.dart';
 import 'player.dart';
 
 //TODO! Change player explosion animation
-//TODO! Add scores timer
+//TODO! Fix scores timer
 //TODO! Add coins count
 //TODO! Add background to ui elements on canvas
 class MyGame extends FlameGame with PanDetector, HasCollisionDetection {
@@ -24,6 +25,7 @@ class MyGame extends FlameGame with PanDetector, HasCollisionDetection {
   late AmbulanceManager _ambulanceManager;
   late SpriteAnimationComponent _fireComponent;
   late SpriteAnimationComponent _smokeComponent;
+  late Score _score = Score();
 
   bool isAlreadyLoaded = false;
 
@@ -123,8 +125,12 @@ class MyGame extends FlameGame with PanDetector, HasCollisionDetection {
       add(_fireComponent);
 
       /// health component
-      // add(Health(image: playerImage));
+      add(Health(image: playerSmallImage));
       isAlreadyLoaded = false;
+
+      /// score component
+      _score = Score();
+      add(_score);
     }
   }
 
@@ -142,6 +148,10 @@ class MyGame extends FlameGame with PanDetector, HasCollisionDetection {
     super.update(dt);
     _updateComands();
     _getPlayerCarBurning();
+
+    if (_player.health <= 0) {
+      _score.timer.pause();
+    }
 
     if (_player.health <= 0 && !(camera.shaking)) {
       overlays.remove(PauseButton.id);
@@ -207,6 +217,7 @@ class MyGame extends FlameGame with PanDetector, HasCollisionDetection {
   }
 
   void reset() {
+    _score.reset();
     _player.reset();
     _enemyManager.reset();
     _ambulanceManager.reset();
