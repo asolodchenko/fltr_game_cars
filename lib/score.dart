@@ -22,15 +22,14 @@ class Score extends TextComponent with HasGameRef<MyGame> {
     positionType = PositionType.viewport;
     text = score.toString();
     //TODO! fix timer position to center
-    position = Vector2(gameRef.size.x /2 , 27);
+    position = Vector2(gameRef.size.x / 2, 27);
     scale = Vector2(1, 1);
   }
 
   @override
   void update(double dt) {
     timer.update(dt);
-    //TODO! remove dot at double...
-    score = 'Score: ${timer.current.toStringAsFixed(1)}';
+    score = 'Score: ${timer.current.toStringAsFixed(1).replaceAll('.', '')}';
     text = score.toString();
   }
 

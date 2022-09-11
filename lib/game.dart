@@ -46,7 +46,7 @@ class MyGame extends FlameGame with PanDetector, HasCollisionDetection {
       final policeCar =
           [1, 2, 3].map((i) => Sprite.load('cars/police_animation/$i.png'));
       final explosion = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
-          .map((i) => Sprite.load('explosion/circle_explosion$i.png'));
+          .map((i) => Sprite.load('hero_explosion/$i.png'));
       final ambulanceCar =
           [1, 2, 3].map((i) => Sprite.load('cars/ambulance_animation/$i.png'));
       final fire = [1, 2, 3, 4, 5, 6].map((i) => Sprite.load('fire/$i.png'));
